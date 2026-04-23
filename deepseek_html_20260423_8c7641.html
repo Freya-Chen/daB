@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>高中化学课堂：铁离子产率探究 | 影响因素 & 实操方案</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #eef2f7 0%, #e0e8f0 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            padding: 1.5rem;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 页面切换Tab */
+        .tab-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 3rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            width: fit-content;
+            backdrop-filter: blur(4px);
+        }
+
+        .tab-btn {
+            border: none;
+            background: transparent;
+            padding: 0.6rem 1.8rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #475569;
+            font-family: inherit;
+        }
+
+        .tab-btn.active {
+            background: #2c7a4d;
+            color: white;
+            box-shadow: 0 2px 8px rgba(44,122,77,0.3);
+        }
+
+        .tab-btn:first-child.active {
+            background: #2c7a4d;
+        }
+        .tab-btn:last-child.active {
+            background: #1e5f8e;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .page.active-page {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        /* 问题卡片 */
+        .question-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 1.8rem;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 25px -8px rgba(0,0,0,0.1);
+            border: 1px solid rgba(59,130,246,0.2);
+        }
+
+        .question-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(120deg, #1f5e3a, #2c7a4d);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #0c4a6e;
+            margin: 0.25rem 0;
+        }
+
+        .badge-hint {
+            background: #eef2ff;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            color: #1e40af;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+
+        /* 小组网格 */
+        .groups-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .group-card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: all 0.2s;
+            border: 1px solid #e4edf2;
+        }
+
+        .group-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px -12px rgba(0, 0, 0, 0.12);
+        }
+
+        .group-header {
+            background: #f8fafc;
+            padding: 0.8rem 1.2rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #e2edf2;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .group-badge {
+            background: #d9f0e3;
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            color: #166534;
+        }
+
+        .group-content {
+            padding: 1rem 1.2rem 1.2rem;
+        }
+
+        .answer-textarea {
+            width: 100%;
+            border-radius: 1rem;
+            border: 1.5px solid #e2e8f0;
+            padding: 0.7rem 1rem;
+            font-family: inherit;
+            font-size: 0.85rem;
+            resize: vertical;
+            background: #fefefe;
+            transition: 0.2s;
+        }
+
+        .answer-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px #3b82f620;
+        }
+
+        .submit-btn {
+            background: #2c7a4d;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 0.8rem;
+            width: 100%;
+            transition: 0.15s;
+        }
+
+        .submit-btn:hover {
+            background: #166534;
+            transform: scale(0.98);
+        }
+
+        .submitted-preview {
+            margin-top: 0.8rem;
+            background: #f0f9f4;
+            border-radius: 1rem;
+            padding: 0.6rem 0.9rem;
+            font-size: 0.8rem;
+            border-left: 3px solid #2c7a4d;
+            word-break: break-word;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .empty-preview {
+            color: #8ba0ae;
+            font-style: italic;
+        }
+
+        /* 汇总区域 (罗列所有答案，非对比) */
+        .insight-area {
+            background: white;
+            border-radius: 1.8rem;
+            padding: 1.5rem 1.8rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            margin-top: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            border-left: 5px solid #2c7a4d;
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .answers-archive {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            background: #fafcff;
+            padding: 1rem;
+            border-radius: 1.2rem;
+            max-height: 460px;
+            overflow-y: auto;
+        }
+
+        .answer-card {
+            background: #f1f5f9;
+            border-radius: 1rem;
+            padding: 0.8rem 1rem;
+            flex: 1 1 260px;
+            border: 1px solid #e2edf2;
+            transition: 0.1s;
+        }
+
+        .answer-card strong {
+            color: #1f5e3a;
+            display: block;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+        }
+
+        .integration-card {
+            background: #eef6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 1rem 1.2rem;
+            border-radius: 1rem;
+            margin-top: 1rem;
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.7rem;
+            color: #5b7a92;
+        }
+
+        button {
+            background: none;
+            border: none;
+        }
+        @media (max-width: 700px) {
+            body { padding: 1rem; }
+            .question-text { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <!-- Tab 切换栏 -->
+    <div class="tab-bar">
+        <button class="tab-btn active" data-page="factors">🔍 影响因素探究</button>
+        <button class="tab-btn" data-page="operations">⚙️ 具体操作 & 注意事项</button>
+    </div>
+
+    <!-- 页面1：影响因素（原设计，简洁小组命名） -->
+    <div id="factorsPage" class="page active-page">
+        <div class="question-card">
+            <div class="question-title">🧪 第一阶段 · 头脑风暴</div>
+            <div class="question-text">⚛️ “你觉得有哪些因素可以影响铁离子的产率和含量呢？”</div>
+            <div class="badge-hint">💡 小组讨论后，由代表将结论输入对应小组卡片 → 汇总所有观点</div>
+        </div>
+        <div class="groups-grid" id="factorsGrid"></div>
+        <div class="insight-area">
+            <div class="section-title">📋 各小组影响因素汇总（罗列展示）</div>
+            <div id="factorsSummary" class="answers-archive">
+                <div style="color:#8ba0ae; width:100%; text-align:center;">等待小组提交答案…</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页面2：具体操作 & 注意事项（探究方向：增加铁产率的具体措施+注意点） -->
+    <div id="operationsPage" class="page">
+        <div class="question-card">
+            <div class="question-title">🧪 第二阶段 · 实践方案设计</div>
+            <div class="question-text">⚙️ 基于本组探究方向，提出「增加铁离子产率」的具体操作与注意事项</div>
+            <div class="badge-hint">🎯 每个小组围绕不同侧重点：温度调控、氧化剂选择、pH优化、铁源配比、搅拌/时间、杂质控制等，给出可执行方案及风险提示</div>
+        </div>
+        <div class="groups-grid" id="operationsGrid"></div>
+        <div class="insight-area">
+            <div class="section-title">📌 各小组实操方案 & 注意事项（罗列整合）</div>
+            <div id="operationsSummary" class="answers-archive">
+                <div style="color:#8ba0ae; width:100%; text-align:center;">等待小组提交具体方案…</div>
+            </div>
+            <div class="integration-card" id="integrationBox">
+                <strong>🧪 综合提升铁产率的完整方案（草案）</strong><br>
+                <span style="font-size:0.85rem; color:#334155;">当所有小组提交具体操作与注意事项后，系统将自动整合形成一份完整的提升策略。</span>
+            </div>
+        </div>
+    </div>
+    <div class="footer-note">
+        🧑‍🏫 教师提示：每个小组在对应页面提交答案，所有内容仅用于课堂汇总。第二页鼓励各小组针对不同维度提出具体操作和注意事项，最终生成综合方案。
+    </div>
+</div>
+
+<script>
+    // ----------------------------- 数据存储 ---------------------------------
+    // 因素页 (6组)
+    let factorsAnswers = new Array(6).fill("");
+    // 操作页 (6组)  存储格式 { operation: "", precautions: "" } 但为了简洁直观，将操作和注意事项合并为一个文本字段（小组可自由填写）
+    // 要求：具体操作 + 需要注意的事项，在同一个文本框里写清楚即可。
+    let operationAnswers = new Array(6).fill("");
+
+    const GROUP_NAMES = ["第1组", "第2组", "第3组", "第4组", "第5组", "第6组"];
+    // 辅助说明标签（用于第二页稍微引导，但避免幼稚命名）
+    const operationHints = [
+        "🔬 侧重温度与反应速率调控",
+        "⚡ 侧重氧化剂种类与浓度优化",
+        "🧪 侧重pH调节与酸度控制",
+        "🔥 侧重铁源配比及投料方式",
+        "⏳ 侧重搅拌、时间与传质",
+        "🧹 侧重杂质去除与副反应抑制"
+    ];
+
+    // 获取DOM
+    const factorsGrid = document.getElementById("factorsGrid");
+    const factorsSummaryDiv = document.getElementById("factorsSummary");
+    const operationsGrid = document.getElementById("operationsGrid");
+    const operationsSummaryDiv = document.getElementById("operationsSummary");
+    const integrationBox = document.getElementById("integrationBox");
+
+    // 通用渲染函数
+    function renderFactorsUI() {
+        factorsGrid.innerHTML = "";
+        for (let i = 0; i < 6; i++) {
+            const groupId = i;
+            const currentVal = factorsAnswers[groupId] || "";
+            const card = document.createElement("div");
+            card.className = "group-card";
+            card.innerHTML = `
+                <div class="group-header">
+                    <span>🧪 ${GROUP_NAMES[groupId]}</span>
+                    <span class="group-badge">影响因素</span>
+                </div>
+                <div class="group-content">
+                    <textarea class="answer-textarea" id="factorsInput_${groupId}" rows="2" placeholder="例：温度、pH、氧化剂浓度、反应时间、搅拌速率……"></textarea>
+                    <button class="submit-btn" data-group="${groupId}" data-type="factors">📝 提交本组答案</button>
+                    <div class="submitted-preview" id="factorsPreview_${groupId}">
+                        ${currentVal ? `<span>✅ 已提交：${escapeHtml(currentVal.length > 70 ? currentVal.substring(0,70)+"…" : currentVal)}</span>` : '<span class="empty-preview">⏳ 尚未提交</span>'}
+                    </div>
+                </div>
+            `;
+            factorsGrid.appendChild(card);
+        }
+        // 绑定因素提交事件 (委托方式，但动态生成后直接绑定)
+        document.querySelectorAll('#factorsGrid .submit-btn[data-type="factors"]').forEach(btn => {
+            btn.removeEventListener('click', factorsSubmitHandler);
+            btn.addEventListener('click', factorsSubmitHandler);
+        });
+    }
+
+    function factorsSubmitHandler(e) {
+        const btn = e.currentTarget;
+        const groupIdx = parseInt(btn.getAttribute("data-group"));
+        const textarea = document.getElementById(`factorsInput_${groupIdx}`);
+        if (!textarea) return;
+        const newAnswer = textarea.value.trim();
+        if (newAnswer === "") {
+            alert(`⚠️ ${GROUP_NAMES[groupIdx]} 的答案不能为空，请填写影响铁离子产率/含量的因素。`);
+            return;
+        }
+        factorsAnswers[groupIdx] = newAnswer;
+        const previewDiv = document.getElementById(`factorsPreview_${groupIdx}`);
+        if (previewDiv) {
+            previewDiv.innerHTML = `<span>✅ 已提交：${escapeHtml(newAnswer.length > 70 ? newAnswer.substring(0,70)+"…" : newAnswer)}</span>`;
+        }
+        renderFactorsSummary();
+        // 按钮动画
+        btn.style.transform = "scale(0.96)";
+        setTimeout(() => { if(btn) btn.style.transform = ""; }, 150);
+    }
+
+    function renderFactorsSummary() {
+        factorsSummaryDiv.innerHTML = "";
+        let hasAny = false;
+        for (let i = 0; i < 6; i++) {
+            const ans = factorsAnswers[i];
+            if (ans && ans.trim() !== "") {
+                hasAny = true;
+                const bubble = document.createElement("div");
+                bubble.className = "answer-card";
+                bubble.innerHTML = `<strong>${GROUP_NAMES[i]}</strong><br>${escapeHtml(ans)}`;
+                factorsSummaryDiv.appendChild(bubble);
+            } else {
+                const bubble = document.createElement("div");
+                bubble.className = "answer-card";
+                bubble.style.opacity = "0.6";
+                bubble.style.backgroundColor = "#f9f9fc";
+                bubble.innerHTML = `<strong>${GROUP_NAMES[i]}</strong><br><span style="color:#8ba0ae;">⏳ 暂未提交</span>`;
+                factorsSummaryDiv.appendChild(bubble);
+            }
+        }
+        if (!hasAny) {
+            factorsSummaryDiv.innerHTML = '<div style="color:#8ba0ae; width:100%; text-align:center;">📭 暂无小组提交影响因素，请各小组填写并提交。</div>';
+        }
+    }
+
+    // ------------------- 操作与注意事项页面 -------------------
+    function renderOperationsUI() {
+        operationsGrid.innerHTML = "";
+        for (let i = 0; i < 6; i++) {
+            const groupId = i;
+            const currentVal = operationAnswers[groupId] || "";
+            const hintText = operationHints[groupId];
+            const card = document.createElement("div");
+            card.className = "group-card";
+            card.innerHTML = `
+                <div class="group-header">
+                    <span>⚙️ ${GROUP_NAMES[groupId]}</span>
+                    <span class="group-badge">实操方案</span>
+                </div>
+                <div class="group-content">
+                    <div style="font-size:0.7rem; color:#4b5563; background:#f1f5f9; padding:0.3rem 0.6rem; border-radius:20px; margin-bottom:8px;">🎯 方向提示：${hintText}</div>
+                    <textarea class="answer-textarea" id="operationInput_${groupId}" rows="3" placeholder="请写出具体操作（如调节pH至2~3，加入足量氧化剂等）以及注意事项（避免水解、防止沉淀等）……"></textarea>
+                    <button class="submit-btn" data-group="${groupId}" data-type="operation">📌 提交本组方案</button>
+                    <div class="submitted-preview" id="operationPreview_${groupId}">
+                        ${currentVal ? `<span>✅ 已提交：${escapeHtml(currentVal.length > 70 ? currentVal.substring(0,70)+"…" : currentVal)}</span>` : '<span class="empty-preview">⏳ 尚未提交具体操作</span>'}
+                    </div>
+                </div>
+            `;
+            operationsGrid.appendChild(card);
+        }
+        document.querySelectorAll('#operationsGrid .submit-btn[data-type="operation"]').forEach(btn => {
+            btn.removeEventListener('click', operationSubmitHandler);
+            btn.addEventListener('click', operationSubmitHandler);
+        });
+    }
+
+    function operationSubmitHandler(e) {
+        const btn = e.currentTarget;
+        const groupIdx = parseInt(btn.getAttribute("data-group"));
+        const textarea = document.getElementById(`operationInput_${groupIdx}`);
+        if (!textarea) return;
+        const newAnswer = textarea.value.trim();
+        if (newAnswer === "") {
+            alert(`⚠️ ${GROUP_NAMES[groupIdx]} 请填写增加铁离子产率的具体操作与注意事项后再提交。`);
+            return;
+        }
+        operationAnswers[groupIdx] = newAnswer;
+        const previewDiv = document.getElementById(`operationPreview_${groupIdx}`);
+        if (previewDiv) {
+            previewDiv.innerHTML = `<span>✅ 已提交：${escapeHtml(newAnswer.length > 70 ? newAnswer.substring(0,70)+"…" : newAnswer)}</span>`;
+        }
+        renderOperationsSummary();
+        generateIntegratedPlan();
+        btn.style.transform = "scale(0.96)";
+        setTimeout(() => { if(btn) btn.style.transform = ""; }, 150);
+    }
+
+    function renderOperationsSummary() {
+        operationsSummaryDiv.innerHTML = "";
+        let hasAny = false;
+        for (let i = 0; i < 6; i++) {
+            const ans = operationAnswers[i];
+            if (ans && ans.trim() !== "") {
+                hasAny = true;
+                const card = document.createElement("div");
+                card.className = "answer-card";
+                card.style.background = "#fefce8";
+                card.innerHTML = `<strong>${GROUP_NAMES[i]} · 实操与注意</strong><br>${escapeHtml(ans)}`;
+                operationsSummaryDiv.appendChild(card);
+            } else {
+                const card = document.createElement("div");
+                card.className = "answer-card";
+                card.style.opacity = "0.6";
+                card.innerHTML = `<strong>${GROUP_NAMES[i]}</strong><br><span style="color:#8ba0ae;">⏳ 未提交具体方案</span>`;
+                operationsSummaryDiv.appendChild(card);
+            }
+        }
+        if (!hasAny) {
+            operationsSummaryDiv.innerHTML = '<div style="color:#8ba0ae; width:100%; text-align:center;">📭 暂无小组提交具体操作，请各小组根据探究方向提交增加铁产率的措施。</div>';
+        }
+    }
+
+    // 生成综合提升方案（基于所有小组的操作和注意事项）
+    function generateIntegratedPlan() {
+        const validOps = operationAnswers.filter(ans => ans && ans.trim() !== "");
+        if (validOps.length === 0) {
+            integrationBox.innerHTML = `
+                <strong>🧪 综合提升铁产率的完整方案（草案）</strong><br>
+                <span style="font-size:0.85rem; color:#334155;">等待小组提交具体操作与注意事项后，将自动整合形成完整策略。</span>
+            `;
+            return;
+        }
+        
+        // 提取各小组核心要点（罗列整合风格）
+        let points = [];
+        for (let i = 0; i < 6; i++) {
+            if (operationAnswers[i] && operationAnswers[i].trim() !== "") {
+                points.push(`🔹 ${GROUP_NAMES[i]}：${operationAnswers[i].substring(0, 180)}${operationAnswers[i].length > 180 ? "…" : ""}`);
+            }
+        }
+        
+        let summaryHtml = `
+            <strong>🧪 综合提升铁产率的完整方案（多维度整合）</strong><br>
+            <div style="margin-top: 10px; font-size:0.85rem; line-height:1.45; color:#1e293b;">
+                <p>✨ 基于各小组探究方向，整合以下操作要点与注意事项：</p>
+                <ul style="margin-left: 1.2rem; margin-top: 6px;">
+                    ${points.map(p => `<li style="margin-bottom: 8px;">${p}</li>`).join('')}
+                </ul>
+                <p style="margin-top: 12px; background:#e6f7ec; padding: 8px 12px; border-radius: 12px;">📌 综合建议：结合温度精准控制、pH稳态调节、氧化剂梯度添加、杂质预处理以及反应动力学优化，可协同提升铁离子产率与含量，注意防止局部过浓或水解沉淀。</p>
+            </div>
+        `;
+        integrationBox.innerHTML = summaryHtml;
+    }
+
+    // 通用escape
+    function escapeHtml(str) {
+        if (!str) return "";
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+
+    // 页面切换逻辑 & 重新渲染相应汇总 (确保切换后数据同步)
+    function switchPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+        document.getElementById(`${pageId}Page`).classList.add('active-page');
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            if (btn.getAttribute('data-page') === pageId) btn.classList.add('active');
+            else btn.classList.remove('active');
+        });
+        // 切换时刷新对应页面的汇总显示（保证数据最新）
+        if (pageId === 'factors') {
+            renderFactorsSummary();
+        } else if (pageId === 'operations') {
+            renderOperationsSummary();
+            generateIntegratedPlan();
+        }
+    }
+
+    // 绑定tab事件
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const page = btn.getAttribute('data-page');
+            if (page === 'factors') switchPage('factors');
+            else if (page === 'operations') switchPage('operations');
+        });
+    });
+
+    // 初始化全部
+    function init() {
+        renderFactorsUI();
+        renderFactorsSummary();
+        renderOperationsUI();
+        renderOperationsSummary();
+        generateIntegratedPlan();
+    }
+    init();
+</script>
+</body>
+</html>
